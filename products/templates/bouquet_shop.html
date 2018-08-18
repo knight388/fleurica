@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+<link rel="stylesheet" href="{% static 'css/multirange.css' %}">
+{% endblock css %}
+{% block content %}
+    <header class="page-header fixed-menu" style="background-image: url('{% static "images/fleurica-103.jpg" %}');">
+        <div class="page-header-inner">
+            <div class="container">
+                <div class="row vcenter text-center">
+                    <div class="col-md-12">
+                        <h1 class="page-title">SHOP ALL</h1>
+                    </div><!-- / column -->
+                    
+                </div><!-- / row -->
+            </div><!-- / container -->
+        </div><!-- / page-header-inner -->
+    </header>
+    <section id="team">
+        <div class="container">
+            <!--
+            <h2 class="text-left">{% if bouquet.uuid %}Edit {{ bouquet.name }} {% else %} New Bouquet{% endif %} <a href="{% url 'all-bouquets' %}" class="btn btn-primary btn-long pull-right"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back</a></h2>-->
+            
+            {% include "messages.html" %}
+
+            <form id="bfilters">
+            <div class="row space-top-2x">
+                <div class="col-md-3">            
+                    <div class="card">
+                        <div class="card-block">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <strong>Price ($)</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 text-right">
+                                <b>{{ adata.price__min }}</b>
+                            </div>
+                            <div class="col-md-6">
+                                <input id="ex2" type="text" class="span2" value="" name="price" data-slider-min="{{ adata.price__min }}" data-slider-max="{{ adata.price__max }}" data-slider-step="5" data-slider-value="[{{ adata.price__min }},{{ adata.price__max }}]"/>
+                            </div>
+                            <div class="col-md-3">
+                                <b>{{ adata.price__max }}</b>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row space-top">
+                            <div class="col-md-12">
+                                <strong>Delivery</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-unstyled" style="margin: 0 0 0 10px">
+                                    <li><input type="checkbox" name="days" value="sun"> Sunday</li>
+                                    <li><input type="checkbox" name="days" value="mon"> Monday</li>
+                                    <li><input type="checkbox" name="days" value="tue"> Tuesday</li>
+                                    <li><input type="checkbox" name="days" value="wed"> Wednesday</li>
+                                    <li><input type="checkbox" name="days" value="thu"> Thursday</li>
+                                    <li><input type="checkbox" name="days" value="fri"> Friday</li>
+                                    <li><input type="checkbox" name="days" value="sat"> Saturday</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <hr>
+                        {% for k, v in fdict.items %}
+                        <div class="row space-top">
+                            <div class="col-md-12">
+                                <strong>{{ k }}</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-unstyled" style="margin: 0 0 0 10px">
+                                    {% for x in v  %}
+                                    <li><input type="checkbox" name="filters~{{ forloop.parentloop.counter }}" value="{{ x.0 }}"> {{ x.1 }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% if not forloop.last %}
+                        <hr>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control pill" placeholder="Search by bouquet name">
+                        </div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3 ">
+                            <select name="order" class="form-control" id="" placeholder="">
+                                <option hidden>Sort By&nbsp;&nbsp;&nbsp;&#x2c5;<i class="fas fa-angle-down"></i></option>
+                                <option value="">Lowest Price</option>
+                                <option value="">Highest Price</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="bouquet-div">
+                    
+                
+                    </div>
+                </div>
+            </div>
+            </form>
+        
+        </div>
+    </section>
+    <!-- / team -->
+    {% include "__mwidget.html" %}
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script src="{% static 'js/multirange.js' %}"></script>
+<script>
+$(document).ready(function(){
+    $("#ex2").slider({});
+
+    var load_bouquets = function(){
+        $.ajax({
+            url: "{% url 'ajax-load-bouquets' %}",
+            type: "POST",
+            data: $('#bfilters').serialize(),
+            success: function(data) {
+                $('#bouquet-div').html(data);
+            }
+        });
+    }
+
+    load_bouquets();
+
+    $('#ex2').on('slideStop', function(sliderValue){
+        load_bouquets()
+    })
+
+    $('input:checkbox').on('change', function(){
+        load_bouquets()
+    });
+});
+</script>
+{% endblock js %}

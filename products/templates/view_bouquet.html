@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+<link type="text/css" rel="stylesheet" href="{% static 'lslider/css/lightslider.min.css' %}" /> 
+<link type="text/css" rel="stylesheet" href="{% static 'lgallery/css/lightgallery.min.css' %}" /> 
+<link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}" />
+<script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5b4b878e4a104f0011ca68e1&product=inline-share-buttons' async='async'></script>
+
+
+<style>
+h2 {
+    font-size: 2.5rem;
+}
+</style>
+{% endblock css %}
+
+{% block nvb-class %}green-menu{% endblock nvb-class %}
+
+{% block content %}
+    
+    <section id="team">
+        <div class="container">
+            <div class="row space-top-2x">
+                <div class="col-md-9">
+                    <div class="row">
+                         <div class="col-md-6">
+                            <ul id="imageGallery">
+                                {% for itm in bouquet.images %}
+                                <li data-thumb="{{ itm }}" data-src="{{ itm }}">
+                                    <img src="{{ itm }}" />
+                                </li>    
+                                {% endfor %}
+                            </ul>
+                            <div class="space-top">
+                                <p >Thanks to the seasonal nature of flowers, certain blooms or colors may not be availble year round. Our florists will select the freshest flowers for your arrangements, sometimes this wiill mean replacing one variety for another of equal (or greater) value.</p>
+                            </div>
+                    
+                        </div>
+                        <div class="col-md-6">
+                            <h2>{{ bouquet.name }}</h2> 
+                            <div class="space-top">
+                            <span class="price-text">$ {{ bouquet.price }}</span>
+                            </div>  
+                            <div class="sharethis-inline-share-buttons"></div>
+
+
+                            <p>{{ bouquet.description }}</p>
+                            <form id="orderForm" action="">
+                                <input type="hidden" name="bouquet" value="{{ bouquet.id }}">
+                            {% if bouquet.upsize %}
+                            <div class="row space-top-2x">
+                                <div class="col-md-6 vcenter">
+                                    UPSIZE
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="checkbox" name="upsize"> {{ bouquet.upsize }} inches <b>+ ${{ bouquet.upprice }}</b>
+                                </div>
+                            </div>
+                            <hr>
+                            {% endif %}
+                            <div class="row">
+                                <div class="col-md-6 vcenter">
+                                    QUANTITY
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="quantity" id="" class="form-control nempty">
+                                        {% for x in mqlist %}
+                                        <option value="{{ x }}">{{ x }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6 vcenter">
+                                    DATE
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" id="bdate" name="date" class="form-control nempty" required>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6 vcenter">
+                                    TIME
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="time" id="" class="form-control nempty">
+                                        <option value="10">10am - 12pm</option>
+                                        <option value="1">1pm - 3pm</option>
+                                        <option value="3">3pm - 5pm</option>
+                                        <option value="6">6pm - 8pm</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="button" class="btn btn-primary btn-block" disabled>ADD TO CART </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <h4>ARRANGED BY</h4>
+                        {{ bouquet.cli.bname }}
+                        <p>
+                            FLOWER SHOP
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </section>
+    <!-- / team -->
+    {% include "__mwidget.html" %}
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script src="{% static 'lslider/js/lightslider.min.js' %}"></script>
+<script src="{% static 'lgallery/js/lightgallery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script>
+$(document).ready(function() {
+    $('#bdate').datepicker({
+        'format': 'yyyy-mm-dd',
+        'startDate': new Date(),
+    })
+
+    $(".nempty").on('keydown keyup change', function(){
+        var ofdisabled = false;
+        $(".nempty").each(function() {
+            if(!$(this).val()){
+                sfdisabled = true
+            }
+        });
+        
+        $("#orderForm button").prop('disabled', ofdisabled);
+    });
+
+    $("#orderForm button").on('click', function(){
+        if (!$("#orderForm button").prop('disabled')){
+            $.ajax({
+                url: "{% url 'ajax-manage-cart' %}",
+                type: "POST",
+                data: $("#orderForm").serialize(),
+                success: function(data) {
+                
+                    `<div class="cart-small" id="cart-{id}">
+                                <img src="{ url }" alt="">
+                                <a href="#x" class="text-black">{name} - ${amount}</a>
+                                <a href="#x"> <i class="md-icon dp16 close-icon">close</i></a>
+                            </div><!-- / cart-small -->`
+                }, 
+            });
+        }
+    });
+
+
+    $('#imageGallery').lightSlider({
+        gallery:true,
+        item:1,
+        loop:true,
+        thumbItem:9,
+        slideMargin:0,
+        enableDrag: false,
+        currentPagerPosition:'left',
+        onSliderLoad: function(el) {
+            el.lightGallery({
+                selector: '#imageGallery .lslide'
+            });
+        }   
+    });  
+});
+
+</script>
+{% endblock js %}

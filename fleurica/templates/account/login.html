@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% load i18n widget_tweaks %}
+{% load account %}
+{% load staticfiles %}
+
+{% block css %}
+<style>
+input#id_remember {
+  margin-top: 11px;
+}
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="row">
+          <div class="col-md-12">
+            <h4 style="color: white;">Consent Management</h4>
+          </div>
+        </div>
+    <div class="portlet light">
+      {% include "messages.html" %}
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Sign In</h1>
+        </div>
+      </div>
+      {% if form.non_field_errors %}
+  {% for e in form.non_field_errors %}
+  <div class="row">
+
+    <div class="col-md-12 margin-top-10">
+      <div class="alert alert-danger">{{ e }}</div>
+    </div>
+  </div>
+  {% endfor %}
+{% endif %}
+      <form class="login form-horizontal" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+
+        {% for field in form %}
+        {% if field.errors %}
+        <div class="form-group has-error">
+          <label class="col-sm-3 control-label" for="id_{{ field.name }}">{{ field.label }}</label>
+          <div class="col-sm-9">
+            {% if field.name != 'remember' %}
+            {% if debug %}
+              {{ field|attr:"class:form-control" }}
+              {% else %}
+              {{ field|attr:"class:form-control"|attr:"autocomplete:off" }}
+              {% endif %}
+            {% else %}
+              {{ field }}
+            {% endif %}
+            <span class="help-block">
+              {% for error in  field.errors %}{{ error }}{% endfor %}
+            </span>
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_{{ field.name }}">{{ field.label }}</label>
+          <div class="col-sm-9">
+            {% if field.name != 'remember' %}
+            {% if debug %}
+            {{ field|attr:"class:form-control" }}
+            {% else %}
+            {{ field|attr:"class:form-control"|attr:"autocomplete:off" }}
+            {% endif %}
+            {% else %}
+              {{ field }}
+            {% endif %}
+            
+            {% if field.help_text %}
+            <p class="help-block"><small>{{ field.help_text }}</small></p>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <div class="row margin-top-20">
+          <div class="col-md-12">
+            <a class="button secondaryAction pull-left" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <button class="primaryAction btn btn-primary btn-long pull-right" type="submit">{% trans "Sign In" %}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

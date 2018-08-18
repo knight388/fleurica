@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+<style>
+    #customFile .custom-file-control:lang(en)::after {
+  content: "Select file...";
+}
+
+#customFile .custom-file-control:lang(en)::before {
+  content: "Click me";
+}
+
+/*when a value is selected, this class removes the content */
+.custom-file-control.selected:lang(en)::after {
+  content: "" !important;
+}
+
+.custom-file {
+  overflow: hidden;
+}
+.custom-file-control {
+  white-space: nowrap;
+}
+</style>
+{% endblock css %}
+{% block content %}
+
+    <section id="team">
+        <div class="container">
+            <h2 class="text-left">Edit {{ florist.bname }}</h2>
+             {% include "messages.html" %}
+            <form action="" method="POST" enctype="multipart/form-data">
+            <div class="row space-top-2x">
+                <div class="col-md-12">
+                    {% crispy form %}
+                    <div>
+                        <h5 class="text-center space-top">Store Config</h5>
+                        <div class="spacer spacer-line border-primary">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="">Opening Days</label>
+                            <table class="table">
+                                <thead>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        {% for x in wlist %}
+                                        <td>
+                                            <input type="checkbox" name="days" value="{{ x }}" {% if x in florist.days %}checked{% endif %}>
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="">Opening Hours</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select name="hours" id="" class="form-control">
+                                        {% for x in olist %}
+                                        <option value="{{ x }}" {% if x == florist.hours.0 %}selected{% endif %}>{{ x }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <p class="form-text text-muted">am <span class="pull-right">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="hours" id="" class="form-control">
+                                        {% for x in clist %}
+                                        <option value="{{ x }}" {% if x == florist.hours.1 %}selected{% endif %}>{{ x }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <p class="form-text text-muted">pm</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Logo Image</label>
+                            <input type="file" value="{{ florist.logo.url }}" name="logo" accept="image/*">
+                            <p class="form-text text-muted">Please upload a square of minimum 400 x 400 px resolution.</p>
+  
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Banner Image</label>
+                            <input type="file" name="banner" value="{{ florist.banner.url }}" accept="image/*">
+                            <p class="form-text text-muted">Please upload an image of dimensions 1920 x 1280 px resolution.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="text-center space-top">Questions</h5>
+                        <div class="spacer spacer-line border-primary">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="">How would you describe your style?</label>
+                            <textarea class="form-control" name="questions" id="" cols="30" rows="4">{{ florist.questions.0 }}</textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">What's your favourite time of the day?</label>
+                            <textarea class="form-control" name="questions" id="" cols="30" rows="4">{{ florist.questions.1 }}</textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">What made you a florist?</label>
+                            <textarea class="form-control" name="questions" id="" cols="30" rows="4">{{ florist.questions.2 }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row space-top-2x">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-long" type="submit">Save</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </form>
+        </div><!-- / container -->
+    </section>
+    <!-- / team -->
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script>
+$(document).ready( function () {
+    $('#ftable').DataTable();
+
+    $('.custom-file-input').on('change',function(){
+        $(this).next('.form-control-file').addClass("selected").html($(this).val());
+    })
+
+    $('.custom-file-input').on('click', function(e){
+        e.preventDefault();
+    })
+} );
+</script>
+{% endblock js %}

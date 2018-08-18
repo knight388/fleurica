@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+{% endblock css %}
+{% block content %}
+
+    <section id="team">
+        <div class="container">
+            <h2 class="text-left">Florists</h2>
+            
+            <div class="row space-top-2x">
+                <div class="col-md-12">
+                    {% if 'all' in request.path %}
+                    <table id="ftable" class="table">
+                        <thead class="thead-default">
+                            <th>Business Name</th>
+                            <th>ACRA</th>
+                            <th>Contact</th>
+                            <th>Contact No</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                        </thead>
+                        <tbody>
+                            {% for flo in florists %}
+                            <tr>
+                                <td>{{ flo.bname }}</td>
+                                <td>{{ flo.acra }}</td>
+                                <td>{{ flo.con_name }}</td>
+                                <td>{{ flo.con_email }}</td>
+                                <td>{{ flo.con_number }}</td>
+                                <td>
+                                    <select class="status" name="" id="" value="">
+                                        <option value="1" {% if flo.status == 1 %}selected{% endif %}>Live</option>
+                                        <option value="2" {% if flo.status == 2 %}selected{% endif %}>Offline</option>
+                                        <option value="3" {% if flo.status == 3 %}selected{% endif %}>Deactivated</option>
+                                    </select>
+                                </td>
+                                <td><a class="btn btn-primary btn-xs" href="{% url 'edit-florist' flo.uuid %}"><i class="fas fa-pencil-alt"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <table id="ftable" class="table">
+                        <thead class="thead-default">
+                            <th>Business Name</th>
+                            <th>Contact</th>
+                            <th>Contact No</th>
+                            <th>Email</th>
+                            <th>Approve</th>
+                        </thead>
+                        <tbody>
+                            {% for flo in florists %}
+                            <tr>
+                                <td>{{ flo.bname }}</td>
+                                <td>{{ flo.con_name }}</td>
+                                <td>{{ flo.con_email }}</td>
+                                <td>{{ flo.con_number }}</td>
+                                
+                                <td>
+                                    <button class="btn btn-primary btn-xs fbutton" href="{% url 'edit-florist' flo.uuid %}" data-id="{{ flo.id }}"><i class="fas fa-check"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div><!-- / column -->
+            </div><!-- / row -->
+        </div><!-- / container -->
+    </section>
+    <!-- / team -->
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script>
+$(document).ready( function () {
+    $('#ftable').DataTable();
+    $('html').on('click', '.fbutton', function(){
+        var fid = $(this).data('id');
+        $.ajax({
+            url: "{% url 'ajax-confirm-f' %}",
+            type: "POST",
+            data: "&fid=" + fid,
+            success: function(data) {
+                location.reload();
+            }
+        });
+    });
+} );
+</script>
+{% endblock js %}

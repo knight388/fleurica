@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<header class="lp-demo bg-img fixed-menu">
+        <div class="container header-inner">
+            <div class="row">
+                <div class=""></div>    
+                <div class="col-md-1"></div>
+                <div class="col-md-6 mt-3 mb-3 left-area dark">
+                    <h1 class=" text-center">Join Fleurica !</h1>
+                    <p class="lead header-text">
+                    	Fleurica is more than a customer facing platform to purchase the best of craft flower arrangements in Singapore - we are a community, a movement. Like our passionate florists, we are all about celebrating flowers as art, individual expressions and the most personal and meaningful gift. Join the Fleurica community to: 
+                    <p>
+                    	<ul>
+                    		<li>Reach new customers</li>
+                    		<li>Simplify logistics</li>
+                    		<li>Manage your online business more effectively</li>
+                    	</ul>
+                </div><!-- / column -->
+                <div class="col-md-1"></div>
+                <div class="col-md-4 mt-3 mb-3">
+                    <div class="card">
+                        <div class="card-block">
+                            <!-- pill tab in card -->
+                                <form action="" method="POST">
+                                    <input type="hidden" name="honeypot">
+                                    {% csrf_token %}
+                                    <p class="text-left">Complete the details below and we</br> will be in touch!</p>
+                                    {% include "messages.html" %}
+                                    <input type="name" name="name" class="form-control mb-3" placeholder="Your Name" required>
+                                    <input type="email" name="email" class="form-control mb-3"  placeholder="E-mail" required>
+                                    <input type="number" name="contact" class="form-control mb-3" placeholder="Contact Number" required>
+                                    
+                                    <input type="text" name="bname" class="form-control mb-3" placeholder="Registered Business Name" required>
+                                        <div class="left-area">
+                                            <div class="checkbox checkbox-primary ml-1">
+                                                <input id="checkbox6" type="checkbox" required>
+                                                <label for="checkbox6">
+                                                    I Accept <a href="{% static 'Fleurica_Merchant_Agreement.pdf' %}" target="_blank">Terms &amp; Conditions</a>
+                                                </label>
+                                            </div><!-- / checkbox -->
+                                        </div><!-- / left-area -->
+                                    </br>
+                                    <button type="submit" class="btn btn-primary">SIGN UP</a>
+                                </form>
+                                   
+                               
+                        </div><!-- / card-block -->
+                    </div><!-- / card -->
+                </div><!-- / column -->
+            </div><!-- / row -->
+        </div><!-- / header-inner -->
+    </header>
+{% endblock content %}

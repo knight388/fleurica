@@ -1,0 +1,99 @@
+{% load i18n %}
+{% load staticfiles %}
+
+<div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        
+        <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="upform">
+          <input type="hidden" name="image" id="">  
+          <input type="hidden" name="pos" id="" value="{{ loc }}">
+        </form>
+        <div id="image-cropper">
+          <!-- This is where the preview image is displayed -->
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button class="btn btn-warning select-image-btn"><i class="fas fa-image"></i>&nbsp;&nbsp;{% trans "Select new image" %}</button>
+              <input type="file" class="cropit-image-input" style="display:none"/>
+            </div>
+          </div>
+          <div class="cropit-preview">
+          </div>
+
+          <!-- This range input controls zoom -->
+          <!-- You can add additional elements here, e.g. the image icons -->
+          <div class="row">
+            <div class="col-md-4 text-right">
+              <i class="fas fa-image" style="position:relative; top:-2px"></i>
+            </div>
+            <div class="col-md-4">
+              <input type="range" class="cropit-image-zoom-input custom" min="0" max="1" step="0.01" style="width: 100%">
+            </div>
+            <div class="col-md-4">
+              <i class="fas fa-image fa-2x" style="position:relative; top:-7px"></i>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button class="btn btn-primary" id="set-image-btn"><i class="fas fa-plus"></i>&nbsp;&nbsp;{% trans "Set Image" %}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="{% static 'js/jquery.cropit.js' %}"></script>
+<script>
+var pos = ''
+
+$(function(){
+  $('#image-cropper').cropit({
+    imageBackground: true,
+    exportZoom: 3,
+    onImageError: function() {
+      toastr.error('{% trans "Please upload a photo bigger than 900 x 900 pixels" %}')
+    }
+  });
+
+  $('#imgModal').on('shown.bs.modal', function (e) {
+    pos = $(e.relatedTarget).data('pos');
+    $(e.currentTarget).find('input[name="pos"]').val(pos);
+  })
+
+  $('#set-image-btn').click(function() {
+    debugger
+    var img = $('#image-cropper').cropit('export', {
+      type: 'image/png',
+      quality: 1});
+    
+    $('#imgModal').find('input[name="image"]').val(img);
+    $.ajax({
+            url: '{% url "upload" %}',
+            type: "POST",
+            data: $('#upform').serialize(),
+            success:function(data){
+                {% if 'products' in request.path %}
+                    $("a").find("[data-pos='" + pos + "']"); 
+                {% else %}
+                    location.reload();
+                {% endif %}
+
+            }
+    })
+
+  });
+
+  $('.select-image-btn').click(function() {
+    $('.cropit-image-input').click();
+  });
+});
+</script>

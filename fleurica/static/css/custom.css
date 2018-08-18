@@ -1,0 +1,74 @@
+h1 {
+	font-size: 55px;
+}
+
+.btn-long{
+  min-width: 140px;
+}
+
+      .cropit-preview {
+        background-color: #f8f8f8;
+        background-size: cover;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin: 20px auto;
+        width: 300px;
+        height: 300px;
+      }
+      .cropit-preview-image-container {
+        cursor: move;
+      }
+      .image-size-label {
+        margin-top: 10px;
+      }
+
+      #imgModal input, #imgModal .export {
+        display: block;
+      }
+      
+      .cropit-preview-background {
+      opacity: .2;
+    }
+
+    #image-cropper {
+  overflow: hidden;
+}
+
+.container-fluid {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
+
+img.card-img-top {
+    width: 100%;
+}
+
+.price-text {
+  font-size: 2rem;
+}
+
+.trans-menu {
+  padding: 0, 0;
+  background: linear-gradient(rgba(0,0,0,1), transparent);
+}
+
+.green-menu {
+  padding: 0, 0;
+  background-color: #224041; 
+}
+
+header .page-title {
+  color: white;
+  font-size: 4em;
+}
+
+header .page-header-inner {
+  padding: 90px 0;
+}
+.card a {
+   color:#444444 !important;
+}
+
+#imageGallery img{
+  width:100%;
+}

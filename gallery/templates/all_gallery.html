@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+{% endblock css %}
+{% block content %}
+
+    <section id="team">
+        <div class="container">
+            <h2 class="text-left">Gallery<a data-toggle="modal" class="pull-right btn-primary btn" data-target="#imgModal" data-pos="campaign-{{ camp.id }}-1"><i class="fas fa-plus">&nbsp;&nbsp;Add Image</i>
+</a></h2>
+            
+            <div class="row space-top-2x">
+                {% for img in images %}
+                
+                    <div class="col-md-2">
+                        <img src="{{ img.image.url }}" alt="" style="width:100%">
+                    </div>
+                {% endfor %}
+            </div><!-- / row -->
+        </div><!-- / container -->
+    </section>
+    <!-- / team -->
+    {% include "__mwidget.html" with loc='gallery' %}
+{% endblock content %}
+
+{% block js %}
+
+{% endblock js %}

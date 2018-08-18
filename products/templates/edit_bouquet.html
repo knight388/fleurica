@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+{% endblock css %}
+{% block content %}
+
+    <section id="team">
+        <div class="container">
+            <h2 class="text-left">{% if bouquet.uuid %}Edit {{ bouquet.name }} {% else %} New Bouquet{% endif %} <a href="{% url 'all-bouquets' %}" class="btn btn-primary btn-long pull-right"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;Back</a></h2>
+            
+            {% include "messages.html" %}
+
+            <form action="" method="POST">
+                {% csrf_token %}
+            <div class="row space-top-2x">
+                <div class="col-md-12">
+
+                    <div>
+                <h5 class="text-center">Bouquet Images</h5>
+                    <div class="spacer spacer-line border-primary">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a data-toggle="modal" data-target="#imgModal" data-pos="bouquet-{{ bouquet.id }}-1">
+                                {% if bouquet.images.0 %}
+                                <img src="{{ bouquet.images.0 }}" alt="" style="width:100%">
+                                <div class="text-md-center">
+                                    <i class="fa fa-refresh fa-2x"></i>
+                                </div>
+                                {% else %}
+                                <div style="height:100px; background:#CCC; height: 90px; line-height: 90px;" class="text-md-center">
+                                    <i class="fa fa-plus-circle fa-2x" style="color:white;"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a data-toggle="modal" data-target="#imgModal" data-pos="bouquet-{{ bouquet.id }}-2">
+                                {% if bouquet.images.1 %}
+                                <img src="{{ bouquet.images.1 }}" alt="" style="width:100%">
+                                <div class="text-md-center">
+                                    <i class="fa fa-refresh fa-2x"></i>
+                                </div>
+                                {% else %}
+                                <div style="height:100px; background:#CCC; height: 90px; line-height: 90px;" class="text-md-center">
+                                    <i class="fa fa-plus-circle fa-2x" style="color:white;"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a data-toggle="modal" data-target="#imgModal" data-pos="bouquet-{{ bouquet.id }}-3">
+                                {% if bouquet.images.2 %}
+                                <img src="{{ bouquet.images.2 }}" alt="" style="width:100%">
+                                <div class="text-md-center">
+                                    <i class="fa fa-refresh fa-2x"></i>
+                                </div>
+                                {% else %}
+                                <div style="height:100px; background:#CCC; height: 90px; line-height: 90px;" class="text-md-center">
+                                    <i class="fa fa-plus-circle fa-2x" style="color:white;"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div> 
+                        <h5 class="text-center space-top">Bouquet Details</h5> 
+                        <div class="spacer spacer-line border-primary">&nbsp;</div>
+                    </div>
+                    <div class="row"> <div class="col-md-3"> 
+                        <div id="div_id_name" class="form-group"> <label for="id_name" class="control-label  requiredField">
+                        Name<span class="asteriskField">*</span> </label> <div class="controls "> <input type="text" name="name" maxlength="300" required=""  value ="{{ bouquet.name }}"class="textinput textInput form-control" id="id_name"> </div> </div> </div>
+                        <div class="col-md-6"> <div id="div_id_description" class="form-group"> <label for="id_description" class="control-label  requiredField">
+                            Description<span class="asteriskField">*</span> </label> <div class="controls "> <input type="text" name="description" maxlength="600" value ="{{ bouquet.description }}" required="" class="textinput textInput form-control" id="id_description"> </div> </div> </div>
+
+                    </div>
+                    <div> <h5 class="text-center space-top">Bouquet Specifications</h5> <div class="spacer spacer-line border-primary">&nbsp;</div>
+                    </div>
+                    <div class="row"> <div class="col-md-2"> <div id="div_id_max_qty" class="form-group"> <label for="id_max_qty" class="control-label  requiredField">
+                Max Qty<span class="asteriskField">*</span> </label> <div class="controls "> <input type="number" name="max_qty" value="{{ bouquet.max_qty|default:'0' }}" required="" class="numberinput form-control" id="id_max_qty"> </div> </div> </div>
+<div class="col-md-2"> <div id="div_id_size" class="form-group"> <label for="id_size" class="control-label  requiredField">
+                Size<span class="asteriskField">*</span> </label> 
+
+                    <div class="controls input-group">
+
+                        <input type="number" name="size" value="{{ bouquet.size|default:'5' }}" required="" class="numberinput form-control" id="id_size">
+                        <div class="input-group-addon">
+    <span class="input-group-text" id="basic-addon2">cm</span>
+  </div>
+                        </div> </div> 
+                        
+                    </div>
+<div class="col-md-2"> <div id="div_id_price" class="form-group"> <label for="id_price" class="control-label ">
+                Cost<span class="asteriskField">*</span>
+            </label> <div class="controls input-group ">
+            <div class="input-group-addon">
+    <span class="input-group-text" id="basic-addon2">$</span>
+  </div>
+            <input type="number" name="price" step="0.01" class="numberinput form-control" value="{{ bouquet.price|default:'' }}" id="id_price" required> </div> </div> </div>
+<div class="col-md-2"> <div id="div_id_upsize" class="form-group"> <label for="id_upsize" class="control-label  requiredField">
+                Upsize<span class="asteriskField">*</span> </label> <div class="controls input-group"> <input type="number" name="upsize" value="{{ bouquet.upsize|default:'5' }}" required="" class="numberinput form-control" id="id_upsize"><div class="input-group-addon">
+    <span class="input-group-text" id="basic-addon2">cm</span>
+  </div></div> </div></div>
+<div class="col-md-2"> <div id="div_id_upprice" class="form-group"> <label for="id_upprice" class="control-label ">
+                Cost<span class="asteriskField">*</span>
+            </label> <div class="controls input-group"> <div class="input-group-addon">
+    <span class="input-group-text" id="basic-addon2">$</span>
+  </div><input type="number" name="upprice" step="0.01" class="numberinput form-control" id="id_upprice" value="{{ bouquet.upprice|default:'' }}" required> </div> </div> </div>
+
+</div>
+                <div>
+                    <h5 class="text-center space-top">Bouquet Filters</h5>
+                    <div class="spacer spacer-line border-primary">&nbsp;</div>
+                </div>
+                <div class="row">
+                    {% for k, v in fdict.items %}
+                    <div class="col-md-3">
+                        <h5>{{ k }}</h5> 
+                        <ul class="list-unstyled">
+                            {% for itm in v %}
+                                <li><input type="checkbox" name="filters" value="{{ itm.0 }}" {% if itm.0 in flist %}checked{% endif %}>&nbsp;&nbsp;{{ itm.1 }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>    
+                    {% endfor %}
+                </div>
+                    
+               
+                <div class="row space-top-2x">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-long" type="submit">Save</button>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </form>
+        </div>
+    </section>
+    <!-- / team -->
+    {% include "__mwidget.html" %}
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script>
+
+</script>
+{% endblock js %}

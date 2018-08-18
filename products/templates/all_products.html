@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+{% endblock css %}
+{% block content %}
+
+    <section id="team">
+        <div class="container">
+            <h2 class="text-left">Products <a href="{% url 'new-bouquet' %}" class="btn btn-primary btn-long pull-right"><i class="fas fa-plus"></i>&nbsp;&nbsp;Add Product</a></h2>
+            
+            <div class="row space-top-2x">
+                <div class="col-md-12">
+                    <table id="ftable" class="table">
+                        <thead class="thead-default">
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Images</th>
+                            <th>Size (cm)</th>
+                            <th>Cost ($)</th>
+                            <th>Upsize (cm)</th>
+                            <th>Cost ($)</th>
+                            <th>Max QTY</th>
+                            <th>Filters</th>
+                            <th>Actions</th>
+                        </thead>
+                        <tbody>
+                            {% for prod in prods %}
+                            <tr>
+                                <td>{{ prod.name }}</td>
+                                <td>{{ prod.description }}</td>
+                                <td>
+                                    {% for img in prod.images %}
+                                    <img src="{{ img }}" alt="" width="100px">
+                                    {% endfor %}</td>
+                                <td>{{ prod.size }}</td>
+                                <td>{{ prod.price }}</td>
+                                <td>{{ prod.upsize }}</td>
+                                <td>{{ prod.upprice }}</td>
+                                <td>{{ prod.max_qty }}</td>
+                                <td></td>
+                                <td><a class='btn btn-primary btn-xs' href="{% url 'edit-bouquet' prod.uuid %}"><i class="fas fa-pencil-alt"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div><!-- / column -->
+            </div><!-- / row -->
+        </div><!-- / container -->
+    </section>
+    <!-- / team -->
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script>
+$(document).ready( function () {
+    $('#ftable').DataTable();
+    $('html').on('click', '.fbutton', function(){
+        var fid = $(this).data('id');
+        $.ajax({
+            url: "{% url 'ajax-confirm-f' %}",
+            type: "POST",
+            data: "&fid=" + fid,
+            success: function(data) {
+                location.reload();
+            }
+        });
+    });
+} );
+</script>
+{% endblock js %}
